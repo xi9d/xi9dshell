@@ -1,4 +1,3 @@
-
 use std::sync::mpsc::{channel, Receiver, Sender};
 use std::thread;
 use std::env;
@@ -26,7 +25,7 @@ impl ShellState {
 
         Self {
             input: String::new(),
-            output: vec!["Xi9d Shell - Type your commands below".to_string()],
+            output: vec!["".to_string()],
             current_dir: env::current_dir()
                 .map(|p| p.display().to_string())
                 .unwrap_or_else(|_| "/".to_string()),

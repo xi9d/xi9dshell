@@ -27,10 +27,11 @@ impl eframe::App for Xi9dShell {
         egui::CentralPanel::default()
             .frame(egui::Frame::new().fill(Colors::BLACK))
             .show(ctx, |ui| {
-                ui_components::render_header(ui, &self.state.current_dir);
-                ui_components::render_output_area(ui, &self.state.output);
+               // ui_components::render_toolbar(ui, &mut self.state);
                 ui_components::render_input_area(ui, &mut self.state);
-                ui_components::render_toolbar(ui, &mut self.state);
+              //  ui_components::render_header(ui, &self.state.current_dir);
+                ui_components::render_output_area(ui, &self.state.output);
+               // ui_components::render_input_area(ui, &mut self.state);
             });
         
         ctx.request_repaint();
@@ -45,7 +46,7 @@ fn main() -> Result<(), eframe::Error> {
     };
     
     eframe::run_native(
-        "Xi9d Shell",
+        "Xi9dShell",
         options,
         Box::new(|_cc| Ok(Box::new(Xi9dShell::default()))),
     )

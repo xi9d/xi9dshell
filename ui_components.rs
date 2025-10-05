@@ -2,7 +2,7 @@ use eframe::egui;
 use crate::ui_style::Colors;
 use crate::shell_state::ShellState;
 
-pub fn render_header(ui: &mut egui::Ui, current_dir: &str) {
+/*pub fn render_header(ui: &mut egui::Ui, current_dir: &str) {
     ui.add_space(10.0);
     ui.horizontal(|ui| {
         ui.add_space(10.0);
@@ -20,16 +20,17 @@ pub fn render_header(ui: &mut egui::Ui, current_dir: &str) {
     ui.add_space(5.0);
     ui.separator();
     ui.add_space(10.0);
-}
+}*/
 
 pub fn render_output_area(ui: &mut egui::Ui, output: &[String]) {
     egui::ScrollArea::vertical()
         .auto_shrink([false, false])
-        .stick_to_bottom(true)
+        .stick_to_bottom(false)
         .show(ui, |ui| {
             ui.add_space(5.0);
             for line in output {
                 render_output_line(ui, line);
+               // render_input_area(ui, "Xi9d>");
             }
         });
 }
@@ -55,8 +56,6 @@ fn render_output_line(ui: &mut egui::Ui, line: &str) {
 
 pub fn render_input_area(ui: &mut egui::Ui, state: &mut ShellState) -> bool {
     ui.add_space(10.0);
-    ui.separator();
-    ui.add_space(10.0);
 
     let mut command_executed = false;
 
@@ -64,8 +63,8 @@ pub fn render_input_area(ui: &mut egui::Ui, state: &mut ShellState) -> bool {
         ui.add_space(10.0);
         
         ui.label(
-            egui::RichText::new("❯")
-                .color(Colors::CYAN)
+            egui::RichText::new("Xi9d:>")
+                .color(Colors::OFF_WHITE)
                 .size(20.0)
         );
         
@@ -74,7 +73,7 @@ pub fn render_input_area(ui: &mut egui::Ui, state: &mut ShellState) -> bool {
         let text_edit = egui::TextEdit::singleline(&mut state.input)
             .desired_width(f32::INFINITY)
             .font(egui::TextStyle::Monospace)
-            .text_color(Colors::OFF_WHITE);
+            .text_color(Colors::BLACK);
         
         let response = ui.add(text_edit.frame(true));
         
@@ -89,14 +88,14 @@ pub fn render_input_area(ui: &mut egui::Ui, state: &mut ShellState) -> bool {
     command_executed
 }
 
-pub fn render_toolbar(ui: &mut egui::Ui, state: &mut ShellState) {
+/*pub fn render_toolbar(ui: &mut egui::Ui, state: &mut ShellState) {
     ui.add_space(5.0);
     ui.horizontal(|ui| {
         ui.add_space(10.0);
         
         if ui.button(
             egui::RichText::new("Clear")
-                .color(Colors::YELLOW)
+                .color(Colors::BLACK)
         ).clicked() {
             state.clear_output();
         }
@@ -105,16 +104,17 @@ pub fn render_toolbar(ui: &mut egui::Ui, state: &mut ShellState) {
         
         if ui.button(
             egui::RichText::new("Exit")
-                .color(Colors::PINK)
+                .color(Colors::BLACK)
         ).clicked() {
             std::process::exit(0);
         }
     });
     ui.add_space(10.0);
-}
+}*/
 
 fn handle_command_input(state: &mut ShellState) -> bool {
-    let command = state.input.trim().to_string();
+    let command = state.input.trim().to_string(); // so this removes any whitespace arount the
+    // command
     if command.is_empty() {
         return false;
     }
@@ -128,5 +128,5 @@ fn handle_command_input(state: &mut ShellState) -> bool {
     }
     
     state.input.clear();
-    true
+    return true
 }

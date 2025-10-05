@@ -20,6 +20,7 @@ fn handle_cd_command(command: &str) -> String {
     let args: Vec<&str> = command.split_whitespace().collect();
     let new_dir = args.get(1).copied().unwrap_or("~");
     let expanded_dir = navigate_to_directory(new_dir);
+    println!("the current path is ");
 
     match env::set_current_dir(Path::new(&expanded_dir)) {
         Ok(_) => format!("Changed directory to: {}", expanded_dir),

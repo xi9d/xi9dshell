@@ -19,10 +19,10 @@ impl Colors {
 pub fn apply_dark_theme(ctx: &egui::Context) {
     let mut style = (*ctx.style()).clone();
     style.visuals = egui::Visuals::dark();
-    style.visuals.window_fill = Colors::BLACK;
-    style.visuals.panel_fill = Colors::BLACK;
+    style.visuals.window_fill = Colors::YELLOW;
+    style.visuals.panel_fill = Colors::YELLOW;
     style.visuals.faint_bg_color = egui::Color32::from_rgb(10, 10, 10);
-    style.visuals.extreme_bg_color = Colors::BLACK;
+    style.visuals.extreme_bg_color = Colors::RED;
     
     style.visuals.widgets.inactive.bg_fill = Colors::DARK_GRAY;
     style.visuals.widgets.hovered.bg_fill = Colors::MEDIUM_GRAY;
