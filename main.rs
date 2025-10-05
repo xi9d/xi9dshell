@@ -1,75 +1,52 @@
-use std::env;
-use std::io::{stdin, stdout, Write};
-use std::path::Path;
-use std::process::{Child, Command, Stdio};
+mod command_executor;
+mod ui_style;
+mod shell_state;
+mod ui_components;
 
-fn main(){
-    loop {
-        print!("> ");
-        stdout().flush();
+use eframe::egui;
+use shell_state::ShellState;
+use ui_style::Colors;
 
-        let mut input = String::new();
-        stdin().read_line(&mut input).unwrap();
+struct Xi9dShell {
+    state: ShellState,
+}
 
-        // must be peekable so we know when we are on the last command
-        let mut commands = input.trim().split(" | ").peekable();
-        let mut previous_command = None;
-        while let Some(command) = commands.next()  {
-
-            let mut parts = command.trim().split_whitespace();
-            let command = parts.next().unwrap();
-            let args = parts;
-
-            match command {
-                "cd" => {
-                    let new_dir = args.peekable().peek()
-                        .map_or("/", |x| *x);
-                    let root = Path::new(new_dir);
-                    if let Err(e) = env::set_current_dir(&root) {
-                        eprintln!("{}", e);
-                    }
-
-                    previous_command = None;
-                },
-                "exit" => return,
-                command => {
-                    let stdin = previous_command
-                        .map_or(
-                            Stdio::inherit(),
-                            |output: Child| Stdio::from(output.stdout.unwrap())
-                        );
-
-                    let stdout = if commands.peek().is_some() {
-                        // there is another command piped behind this one
-                        // prepare to send output to the next command
-                        Stdio::piped()
-                    } else {
-                        // there are no more commands piped behind this one
-                        // send output to shell stdout
-                        Stdio::inherit()
-                    };
-
-                    let output = Command::new(command)
-                        .args(args)
-                        .stdin(stdin)
-                        .stdout(stdout)
-                        .spawn();
-
-                    match output {
-                        Ok(output) => { previous_command = Some(output); },
-                        Err(e) => {
-                            previous_command = None;
-                            eprintln!("{}", e);
-                        },
-                    };
-                }
-            }
+impl Default for Xi9dShell {
+    fn default() -> Self {
+        Self {
+            state: ShellState::new(),
         }
-
-        if let Some(mut final_command) = previous_command {
-            // block until the final command has finished
-            final_command.wait();
-        }
-
     }
+}
+
+impl eframe::App for Xi9dShell {
+    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        ui_style::apply_dark_theme(ctx);
+        self.state.update_from_receiver();
+        
+        egui::CentralPanel::default()
+            .frame(egui::Frame::new().fill(Colors::BLACK))
+            .show(ctx, |ui| {
+                ui_components::render_header(ui, &self.state.current_dir);
+                ui_components::render_output_area(ui, &self.state.output);
+                ui_components::render_input_area(ui, &mut self.state);
+                ui_components::render_toolbar(ui, &mut self.state);
+            });
+        
+        ctx.request_repaint();
+    }
+}
+fn main() -> Result<(), eframe::Error> {
+    let options = eframe::NativeOptions {
+        viewport: egui::ViewportBuilder::default()
+            .with_inner_size([900.0, 650.0])
+            .with_decorations(true),
+        ..Default::default()
+    };
+    
+    eframe::run_native(
+        "Xi9d Shell",
+        options,
+        Box::new(|_cc| Ok(Box::new(Xi9dShell::default()))),
+    )
 }
