@@ -7,8 +7,12 @@ pub struct ShellState {
     pub input: String,
     pub output: Vec<String>,
     pub current_dir: String,
+    pub confirm_exit:bool,
+    pub show_output: bool,
+    pub dark_mode: bool,
     command_sender: Sender<String>,
     output_receiver: Receiver<String>,
+
 }
 
 impl ShellState {
@@ -29,6 +33,9 @@ impl ShellState {
             current_dir: env::current_dir()
                 .map(|p| p.display().to_string())
                 .unwrap_or_else(|_| "/".to_string()),
+            confirm_exit: false,
+            show_output: true,
+            dark_mode: false,
             command_sender: cmd_tx,
             output_receiver: out_rx,
         }
