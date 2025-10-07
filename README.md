@@ -2,6 +2,9 @@
 
 A custom shell implementation written in Rust.
 
+<img width="1087" height="776" alt="xi9d shell commands" src="https://github.com/user-attachments/assets/29802c15-001a-4b57-9773-f9a9bfa82df8" />
+
+
 ## Prerequisites
 
 Before you begin, ensure you have the following installed:
